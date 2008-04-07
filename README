@@ -1,0 +1,52 @@
+ActsAsChimp
+===========
+
+Simple hook to add or remove a user to/from a MailChimp mailing list.
+
+== Installation
+
+You should have a user table, MailChimp account and list setup that expects email, first_name and last_name at a minimum.  Installation will copy a mail_chimp.yml configuration file to your config directory.  Add your MailChimp login information to these files so we can use the APIs.
+
+== Usage
+
+This plugin is fairly stripped down and a bit opinionated at the moment.  We're using restful_authentication and more or less are assuming you're doing the same are have a similar setup with a user table - we're not dependent on that plugin, but its a damn good one if you're not using it.  We add user first name, last name and email address to our mailing list, and we've likewise assumed you'll want to do the same.  As such, we've provided a script to create a migration to add user first and last names to your users table if they're not already there.  The sign-up forms are up to you and any additional fields are up to you.  You'll need to modify the RPC calls accordingly.   
+
+After running the migrations, you can just add your credentials to the mail_chimp.yml file and then add the following to your user model:
+
+acts_as_chimp :mailing_list_id => 'your_list_id'
+
+and we'll take care of adding the user to the mail chimp list you specify with an after save callback. 
+
+If you need to figure out your mail chimp mail list id, we've provided some helper methods for you in the ChimpHelper class.
+
+=== Prepare database
+
+Generate and apply the migration if you need to:
+
+  ruby script/generate acts_as_chimp_migration
+  rake db:migrate
+
+Example
+=======
+
+Interacting with the ChimpHelper to get your mailing list id:
+
+--instantiated new helper
+c = ChimpHelper.new
+
+--login to get authorized
+authorization_info = c.login('user', 'login')
+
+--pass authorization info and mailing list name to method
+list = c.mailing_list_info(authorization_info,"Test")
+
+
+Adding a user to a mailing list.  Add the following to your User model:
+
+--acts_as_chimp :mailing_list_id => 'your_list_id'
+
+Your User model should have an email, first_name and last_name.  
+
+
+
+Copyright (c) 2008 MandarinSoda, released under the MIT license
