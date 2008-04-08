@@ -5,6 +5,7 @@ class ChimpAuthorizationError < StandardError; end
 
 class ChimpHelper
   def login(user, password)
+    raise ChimpAuthorizationError("Please provide a valid user and password") if (user.nil? || password.nil?) 
     chimp_api ||= XMLRPC::Client.new2("http://www.mailchimp.com/admin/api/1.0/index.phtml") 
     chimp_api.call("login", user, password)
   end
