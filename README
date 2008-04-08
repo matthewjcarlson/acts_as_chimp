@@ -5,13 +5,14 @@ Simple hook to add or remove a user to/from a MailChimp mailing list.
 
 == Installation
 
-You should have a user table, MailChimp account and list setup that expects email, first_name and last_name at a minimum.  Installation will copy a mail_chimp.yml configuration file to your config directory.  Add your MailChimp login information to these files so we can use the APIs.
+You should have a user table, MailChimp account and mailing list setup that expects email, first_name and last_name.  Installation will copy a mail_chimp.yml configuration file to your config directory.  Add your MailChimp login information to this file so we can use the APIs.
 
 == Usage
 
-This plugin is fairly stripped down at the moment and is directed at a fairly specific use case.  We're using restful_authentication and more or less are assuming you're doing the same (or have a similar setup with a user table - we're not dependent on that plugin, but its a damn good one if you're not using it).  
+This plugin is fairly stripped down at the moment and is directed at a fairly specific use case (aka: Sign up for our beta sorta deal).  We're using restful_authentication for our use case and more or less are assuming you're doing the same (or have a similar setup with a user table - we're not dependent on that plugin, but its a damn good one if you're not using it).  
 
-We add user first name, last name and email address to our Mail Chimp mailing list, and we've likewise assumed you'll want to do the same.  As such, we've provided a script to create a migration to add user first and last names to your users table if they're not already there.  The sign-up forms are up to you and any additional fields are up to you.  You'll need to modify the RPC calls accordingly as we haven't added any configurability in that area yet.  
+We add user first name, last name and email address to our MailChimp mailing list, and we've likewise assumed you'll want to do the same.  As such, we've provided a script to create a migration to add user first and last names to your users table if they're not already there.  The sign-up forms are up to you and any additional fields are up to you.  
+
 
 After running the migrations, you can just add your credentials to the mail_chimp.yml file and then add the following to your user model:
 
@@ -34,22 +35,22 @@ Example
 
 Interacting with the ChimpHelper to get your mailing list id:
 
---instantiated new helper
+Instantiate new helper:
 c = ChimpHelper.new
 
---login to get authorized
+Login to get authorized:
 authorization_info = c.login('user', 'login')
 
---pass authorization info and mailing list name to method
+Pass authorization info and mailing list name to method:
 list = c.mailing_list_info(authorization_info,"Test")
 
 
-Adding a user to a mailing list.  Add the following to your User model:
-
---acts_as_chimp :mailing_list_id => 'your_list_id'
+In order to add a user to a mailing list.  Add the following to your User model:
+acts_as_chimp :mailing_list_id => 'your_list_id'
 
 Your User model should have an email, first_name and last_name.  
 
+A user will be removed from a mailing list post_destroy as well.  
 
 
 Copyright (c) 2008 MandarinSoda, released under the MIT license
