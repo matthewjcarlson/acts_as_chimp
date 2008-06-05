@@ -52,22 +52,22 @@ module MandarinSoda
       
       private 
       def chimp_login(user, password)
-        chimp_api ||= XMLRPC::Client.new2("http://www.mailchimp.com/admin/api/1.0/index.phtml")
+        chimp_api ||= XMLRPC::Client.new2("http://api.mailchimp.com/1.0/")
         chimp_api.call("login", user, password)
       end
       
       def chimp_subscribe(auth, mailing_list_id, email, merge_vars, email_content_type="html", double_optin=true)
-         chimp_api ||= XMLRPC::Client.new2("http://www.mailchimp.com/admin/api/1.0/index.phtml")
+         chimp_api ||= XMLRPC::Client.new2("http://api.mailchimp.com/1.0/")
          chimp_api.call("listSubscribe", auth, mailing_list_id, email, merge_vars, email_content_type, double_optin)    
       end
        
       def chimp_remove(auth, mailing_list_id, email, delete_user=false, send_goodbye=true, send_notify=true)
-         chimp_api ||= XMLRPC::Client.new2("http://www.mailchimp.com/admin/api/1.0/index.phtml") 
+         chimp_api ||= XMLRPC::Client.new2("http://api.mailchimp.com/1.0/") 
          chimp_api.call("listUnsubscribe", auth, mailing_list_id, email, delete_user, send_goodbye, send_notify)    
       end
        
       def chimp_info(auth, mailing_list_id, email)
-         chimp_api ||= XMLRPC::Client.new2("http://www.mailchimp.com/admin/api/1.0/index.phtml") 
+         chimp_api ||= XMLRPC::Client.new2("http://api.mailchimp.com/1.0/") 
          chimp_api.call("listMemberInfo", auth, mailing_list_id, email)        
       end
     end 
