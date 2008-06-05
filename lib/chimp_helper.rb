@@ -6,13 +6,13 @@ class ChimpAuthorizationError < StandardError; end
 class ChimpHelper
   def login(user, password)
     raise ChimpAuthorizationError("Please provide a valid user and password") if (user.nil? || password.nil?) 
-    chimp_api ||= XMLRPC::Client.new2("http://www.mailchimp.com/admin/api/1.0/index.phtml") 
+    chimp_api ||= XMLRPC::Client.new2("http://api.mailchimp.com/1.0/") 
     chimp_api.call("login", user, password)
   end
    
   def all_mailing_lists(auth)
     raise ChimpAuthorizationError("Please log in and make sure you have a valid auth id") if (auth.nil?) 
-    chimp_api ||= XMLRPC::Client.new2("http://www.mailchimp.com/admin/api/1.0/index.phtml")
+    chimp_api ||= XMLRPC::Client.new2("http://api.mailchimp.com/1.0/")
     chimp_api.call("lists", auth)    
   end
 
@@ -25,7 +25,7 @@ class ChimpHelper
     
   def mailing_list_members(auth, mailing_list_id, member_status)
     raise ChimpAuthorizationError("Please log in and make sure you have a valid auth id.") if (auth.nil?) 
-    chimp_api = XMLRPC::Client.new2("http://www.mailchimp.com/admin/api/1.0/index.phtml") 
+    chimp_api = XMLRPC::Client.new2("http://api.mailchimp.com/1.0/") 
     chimp_api.call("listMembers", auth, mailing_list_id, member_status)    
   end
 end
