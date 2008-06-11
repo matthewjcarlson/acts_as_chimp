@@ -29,6 +29,7 @@ module MandarinSoda
         after_create :add_to_mailing_list
         after_destroy :remove_from_mailing_list
       end 
+      
     end 
     
     module ClassMethods 
@@ -37,7 +38,7 @@ module MandarinSoda
     module InstanceMethods 
       def add_to_mailing_list
         auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
-        chimp_subscribe(auth, options[:mailing_list_id], self.email, {"FNAME" => self.first_name, "LNAME" => self.last_name})
+        chimp_subscribe(auth, options[:mailing_list_id], self.email, mail_merge_arguments)
       end
       
       def remove_from_mailing_list
@@ -50,26 +51,40 @@ module MandarinSoda
         chimp_info(auth, options[:mailing_list_id], self.email)
       end
       
-      private 
+      private
+      CHIMP_URL = "http://api.mailchimp.com/1.0/" 
       def chimp_login(user, password)
-        chimp_api ||= XMLRPC::Client.new2("http://api.mailchimp.com/1.0/")
+        chimp_api ||= XMLRPC::Client.new2(CHIMP_URL)
         chimp_api.call("login", user, password)
       end
       
       def chimp_subscribe(auth, mailing_list_id, email, merge_vars, email_content_type="html", double_optin=true)
-         chimp_api ||= XMLRPC::Client.new2("http://api.mailchimp.com/1.0/")
-         chimp_api.call("listSubscribe", auth, mailing_list_id, email, merge_vars, email_content_type, double_optin)    
+         begin
+           chimp_api ||= XMLRPC::Client.new2(CHIMP_URL)
+           chimp_api.call("listSubscribe", auth, mailing_list_id, email, merge_vars, email_content_type, double_optin)
+         rescue XMLRPC::FaultException => e
+           puts e.faultCode
+           puts e.faultString
+         end    
       end
        
       def chimp_remove(auth, mailing_list_id, email, delete_user=false, send_goodbye=true, send_notify=true)
-         chimp_api ||= XMLRPC::Client.new2("http://api.mailchimp.com/1.0/") 
+         chimp_api ||= XMLRPC::Client.new2(CHIMP_URL) 
          chimp_api.call("listUnsubscribe", auth, mailing_list_id, email, delete_user, send_goodbye, send_notify)    
       end
        
       def chimp_info(auth, mailing_list_id, email)
-         chimp_api ||= XMLRPC::Client.new2("http://api.mailchimp.com/1.0/") 
+         chimp_api ||= XMLRPC::Client.new2(CHIMP_URL) 
          chimp_api.call("listMemberInfo", auth, mailing_list_id, email)        
       end
+        def mail_merge_arguments
+          unless options[:mail_merge].blank?
+            merge_args = {}
+            options[:mail_merge].each_pair do  |key, value|
+              merge_args[key] = self.send(value) 
+            end
+          end
+        end
     end 
   end 
 end 

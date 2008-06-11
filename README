@@ -16,7 +16,11 @@ We add user first name, last name and email address to our MailChimp mailing lis
 
 After running the migrations, you can just add your credentials to the mail_chimp.yml file and then add the following to your user model:
 
-acts_as_chimp :mailing_list_id => 'your_list_id'
+acts_as_chimp :mailing_list_id => 'your_list_id', :mail_merge => {
+      "EMAIL" => :email, "FNAME" => :first_name, "LNAME" => :last_name }
+      
+
+You can get your list id by using the ChimpHelper class.  The mail merge arguments correspond to the arguments you setup when you created your MailChimp list.       
 
 and we'll take care of adding the user to the mail chimp list you specify with an after save callback. 
 
