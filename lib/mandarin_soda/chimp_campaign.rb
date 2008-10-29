@@ -81,9 +81,10 @@ module MandarinSoda
 
       end
       
-      def schedule
+      def schedule(id, time, group_b_time)
 
       end
+      
       def send_now(id)
         chimp_send_campaign(id)
       end
