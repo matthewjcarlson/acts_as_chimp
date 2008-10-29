@@ -52,7 +52,7 @@ module MandarinSoda
       end
       
       private
-      CHIMP_URL = "http://api.mailchimp.com/1.0/" 
+      CHIMP_URL = "http://api.mailchimp.com/1.1/" 
       def chimp_login(user, password)
         chimp_api ||= XMLRPC::Client.new2(CHIMP_URL)
         chimp_api.call("login", user, password)
