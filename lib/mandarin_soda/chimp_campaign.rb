@@ -25,7 +25,27 @@ module MandarinSoda
       
     end 
     
-    module ClassMethods 
+    module ClassMethods
+      
+       def search
+          auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
+       end
+      
+        def stats(id)
+           auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
+        end 
+        
+        def hard_bounces(id, start, limit)
+          auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
+        end
+          
+        def soft_bounces(id, start, limit)
+          auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
+        end
+        
+        def unsubscribes(id, start, limit)
+          auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
+        end
     end 
     
     module InstanceMethods 
@@ -41,9 +61,6 @@ module MandarinSoda
         auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
       end
       
-       def search_campaigns
-          auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
-        end
       
       private
       CHIMP_URL = "http://api.mailchimp.com/1.1/" 
