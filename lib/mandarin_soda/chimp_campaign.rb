@@ -6,10 +6,11 @@ module MandarinSoda
     
     def self.included(base) 
       base.extend ActMethods
-      mattr_reader :chimp_config
+      mattr_reader :chimp_config, :auth
       begin
         @@chimp_config_path =  (RAILS_ROOT + '/config/mail_chimp.yml')
-        @@chimp_config = YAML.load_file(@@chimp_config_path)[RAILS_ENV].symbolize_keys            
+        @@chimp_config = YAML.load_file(@@chimp_config_path)[RAILS_ENV].symbolize_keys
+        @@auth ||= chimp_login(@@chimp_config[:username], @@chimp_config[:password])                   
       end
     end 
     
@@ -26,68 +27,114 @@ module MandarinSoda
     end 
     
     module ClassMethods
-      
-       def search
-          auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
-       end
-      
-        def stats(id)
-           auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
-        end 
-        
-        def hard_bounces(id, start, limit)
-          auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
-        end
+      def campaigns
           
-        def soft_bounces(id, start, limit)
-          auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
-        end
+      end
+      
+      def stats(id)
+        chimp_campaign_stats(id)
+      end 
         
-        def unsubscribes(id, start, limit)
-          auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
-        end
+      def hard_bounces(id, start, limit)
+        chimp_campaign_hard_bounces(id, start, limit)
+      end
+          
+      def soft_bounces(id, start, limit)
+        chimp_campaign_soft_bounces(id, start, limit)
+      end
+        
+      def unsubscribed(id, start, limit)
+        chimp_campaign_unsubscribed(id, start, limit)
+      end
+      
+      def abuse(id, start, limit)
+
+      end
+      
+      def folders()
+
+      end
+      
     end 
     
     module InstanceMethods 
       def create_campaign
-        auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
+      
       end
       
       def update_campaign
-        auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
+    
       end  
       
-      def resume_campaign
-        auth ||= chimp_login(chimp_config[:username], chimp_config[:password])
+      def resume
+      end
+    
+      def pause
+        
       end
       
+      def unschedule
+        
+      end
+      
+      def content(id)
+
+      end
+      
+      def schedule
+
+      end
+      def send_now(id)
+        chimp_send_campaign(id)
+      end
+      
+      def send_test(id)
+        chimp_send_campaign(id)
+      end
       
       private
-      CHIMP_URL = "http://api.mailchimp.com/1.1/" 
+      CHIMP_URL = "http://api.mailchimp.com/1.1/"
+      CHIMP_API = XMLRPC::Client.new2(CHIMP_URL) 
       def chimp_login(user, password)
-        chimp_api ||= XMLRPC::Client.new2(CHIMP_URL)
-        chimp_api.call("login", user, password)
+        CHIMP_API.call("login", user, password)
       end
       
-      def chimp_subscribe(auth, mailing_list_id, email, merge_vars, email_content_type="html", double_optin=true)
-         begin
-           chimp_api ||= XMLRPC::Client.new2(CHIMP_URL)
-           chimp_api.call("listSubscribe", auth, mailing_list_id, email, merge_vars, email_content_type, double_optin)
-         rescue XMLRPC::FaultException => e
-           puts e.faultCode
-           puts e.faultString
-         end    
+      def chimp_create_campaign(mailing_list_id, type, opts)
+         CHIMP_API.call("listMemberInfo", auth, mailing_list_id)        
       end
-       
-      def chimp_remove(auth, mailing_list_id, email, delete_user=false, send_goodbye=true, send_notify=true)
-         chimp_api ||= XMLRPC::Client.new2(CHIMP_URL) 
-         chimp_api.call("listUnsubscribe", auth, mailing_list_id, email, delete_user, send_goodbye, send_notify)    
+      
+      def chimp_pause_campaign(campaign_id)
+        CHIMP_API.call("campaignPause", auth, campaign_id )        
       end
-       
-      def chimp_info(auth, mailing_list_id, email)
-         chimp_api ||= XMLRPC::Client.new2(CHIMP_URL) 
-         chimp_api.call("listMemberInfo", auth, mailing_list_id, email)        
+      
+      def chimp_resume_campaign(campaign_id)
+        CHIMP_API.call("campaignResume", auth, campaign_id)        
       end
+      
+      def chimp_send_campaign(campaign_id)
+        CHIMP_API.call("campaignSendNow", auth, campaign_id)        
+      end
+      
+      def chimp_send_campaign_test(campaign_id)
+        CHIMP_API.call("campaignSendTest", auth, campaign_id)        
+      end
+      
+      def chimp_campaign_stats(id)
+        CHIMP_API.call("campaignStats", auth, id)    
+      end
+      
+      def chimp_campaign_hard_bounces(id, start=0, limit=100) 
+        CHIMP_API.call("campaignHardBounces", auth, id)    
+      end
+      
+      def chimp_campaign_soft_bounces(id, start=0, limit=100)
+        CHIMP_API.call("campaignSoftBounces", auth, id)    
+      end
+      
+      def chimp_campaign_unsubscribed( id, start=0, limit=100)
+        CHIMP_API.call("campaignUnsubscribes", auth, id)    
+      end
+      
        
     end 
   end 

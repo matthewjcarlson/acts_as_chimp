@@ -17,6 +17,18 @@ class ChimpHelper
     chimp_api.call("lists", auth)    
   end
 
+  def ping(auth)
+    raise ChimpAuthorizationError("Please log in and make sure you have a valid auth id") if (auth.nil?) 
+    chimp_api = XMLRPC::Client.new2(CHIMP_URL)
+    chimp_api.call("ping", auth)    
+  end
+  
+  def affiliate_info(auth)
+     raise ChimpAuthorizationError("Please log in and make sure you have a valid auth id") if (auth.nil?) 
+     chimp_api = XMLRPC::Client.new2(CHIMP_URL)
+     chimp_api.call("getAffiliateInfo", auth)    
+  end
+
   def mailing_list_info(auth, mailing_list_name)
     mailing_lists = all_mailing_lists(auth)
     unless mailing_lists.nil?  
@@ -24,9 +36,4 @@ class ChimpHelper
     end
   end 
     
-  def mailing_list_members(auth, mailing_list_id, member_status)
-    raise ChimpAuthorizationError("Please log in and make sure you have a valid auth id.") if (auth.nil?) 
-    chimp_api = XMLRPC::Client.new2(CHIMP_URL) 
-    chimp_api.call("listMembers", auth, mailing_list_id, member_status)    
-  end
 end
