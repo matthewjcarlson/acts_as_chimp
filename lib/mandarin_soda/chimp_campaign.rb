@@ -7,10 +7,13 @@ module MandarinSoda
     def self.included(base) 
       base.extend ActMethods
       mattr_reader :chimp_config, :auth
+      CHIMP_URL = "http://api.mailchimp.com/1.1/"
+      CHIMP_API = XMLRPC::Client.new2(CHIMP_URL)
+      
       begin
         @@chimp_config_path =  (RAILS_ROOT + '/config/mail_chimp.yml')
         @@chimp_config = YAML.load_file(@@chimp_config_path)[RAILS_ENV].symbolize_keys
-        @@auth ||= chimp_login(@@chimp_config[:username], @@chimp_config[:password])                   
+        @@auth ||= CHIMP_API.call("login", @@chimp_config[:username], @@chimp_config[:password])                   
       end
     end 
     
@@ -21,7 +24,7 @@ module MandarinSoda
           extend ClassMethods 
           include InstanceMethods 
         end
-        self.options = options 
+        self.options = options
       end 
       
     end 
@@ -48,11 +51,36 @@ module MandarinSoda
       end
       
       def abuse(id, start, limit)
-
+        chimp_campaign_abuse_reports(id, start, limit)
       end
       
-      def folders()
+      def folders
+        chimp_campaign_folders
+      end
+      
+      private
+      def chimp_campaign_abuse_reports(campaign_id, start=0, limit=100)
+          CHIMP_API.call("campaignAbuseReports", auth, self.campaign_id)        
+      end
+      
+      def chimp_campaign_stats(campaign_id)
+        CHIMP_API.call("campaignStats", auth, campaign_id)    
+      end
 
+      def chimp_campaign_hard_bounces(campaign_id, start=0, limit=100) 
+        CHIMP_API.call("campaignHardBounces", auth, campaign_id, start, limit)    
+      end
+
+      def chimp_campaign_soft_bounces(campaign_id, start=0, limit=100)
+        CHIMP_API.call("campaignSoftBounces", auth, campaign_id, start, limit)    
+      end
+      
+      def chimp_campaign_unsubscribed(campaign_id, start=0, limit=100)
+        CHIMP_API.call("campaignUnsubscribes", auth, campaign_id, start, limit)    
+      end
+      
+      def chimp_campaign_folders
+        CHIMP_API.call("campaignFolder", auth)    
       end
       
     end 
@@ -62,8 +90,8 @@ module MandarinSoda
       
       end
       
-      def update_campaign(options)
-    
+      def update_campaign(options={})
+        chimp_update_campaign(options)
       end  
       
       def resume
@@ -95,12 +123,7 @@ module MandarinSoda
       end
       
       private
-      CHIMP_URL = "http://api.mailchimp.com/1.1/"
-      CHIMP_API = XMLRPC::Client.new2(CHIMP_URL) 
-      def chimp_login(user, password)
-        CHIMP_API.call("login", user, password)
-      end
-      
+
       def chimp_create_campaign(mailing_list_id, type, opts)
          CHIMP_API.call("listMemberInfo", auth, mailing_list_id)        
       end
@@ -125,22 +148,6 @@ module MandarinSoda
         CHIMP_API.call("campaignSendTest", auth, self.campaign_id)        
       end
       
-      def chimp_campaign_stats(campaign_id)
-        CHIMP_API.call("campaignStats", auth, campaign_id)    
-      end
-      
-      def chimp_campaign_hard_bounces(campaign_id, start=0, limit=100) 
-        CHIMP_API.call("campaignHardBounces", auth, campaign_id)    
-      end
-      
-      def chimp_campaign_soft_bounces(campaign_id, start=0, limit=100)
-        CHIMP_API.call("campaignSoftBounces", auth, campaign_id)    
-      end
-      
-      def chimp_campaign_unsubscribed(campaign_id, start=0, limit=100)
-        CHIMP_API.call("campaignUnsubscribes", auth, campaign_id)    
-      end
-      
       def chimp_campaign_schedule(time, time_b)
         CHIMP_API.call("campaignSchedule", auth, self.campaign_id, time, time_b)    
       end
@@ -152,7 +159,8 @@ module MandarinSoda
       def chimp_campaign_content
           CHIMP_API.call("campaignContent", auth, self.campaign_id)        
       end
-         
+      
+      
     end 
   end 
 end 
