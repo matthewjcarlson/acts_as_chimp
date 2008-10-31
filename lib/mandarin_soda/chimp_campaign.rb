@@ -62,35 +62,36 @@ module MandarinSoda
       
       end
       
-      def update_campaign
+      def update_campaign(campaign_id, name, options)
     
       end  
       
-      def resume
+      def resume(campaign_id)
+        chimp_resume_campaign(campaign_id)
       end
     
-      def pause
-        
+      def pause(campaign_id)
+        chimp_pause_campaign(campaign_id)
       end
       
       def unschedule
         
       end
       
-      def content(id)
+      def content(campaign_id)
 
       end
       
-      def schedule(id, time, group_b_time)
-
+      def schedule(campaign_id, time, group_b_time)
+        chimp_campaign_schedule(campaign_id, time, group_b_time)
       end
       
-      def send_now(id)
-        chimp_send_campaign(id)
+      def send_now(campaign_id)
+        chimp_send_campaign(campaign_id)
       end
       
-      def send_test(id)
-        chimp_send_campaign(id)
+      def send_test(campaign_id)
+        chimp_send_campaign(campaign_id)
       end
       
       private
@@ -112,6 +113,10 @@ module MandarinSoda
         CHIMP_API.call("campaignResume", auth, campaign_id)        
       end
       
+       def chimp_resume_campaign(campaign_id)
+          CHIMP_API.call("campaignResume", auth, campaign_id)        
+        end
+      
       def chimp_send_campaign(campaign_id)
         CHIMP_API.call("campaignSendNow", auth, campaign_id)        
       end
@@ -120,23 +125,26 @@ module MandarinSoda
         CHIMP_API.call("campaignSendTest", auth, campaign_id)        
       end
       
-      def chimp_campaign_stats(id)
-        CHIMP_API.call("campaignStats", auth, id)    
+      def chimp_campaign_stats(campaign_id)
+        CHIMP_API.call("campaignStats", auth, campaign_id)    
       end
       
-      def chimp_campaign_hard_bounces(id, start=0, limit=100) 
-        CHIMP_API.call("campaignHardBounces", auth, id)    
+      def chimp_campaign_hard_bounces(campaign_id, start=0, limit=100) 
+        CHIMP_API.call("campaignHardBounces", auth, campaign_id)    
       end
       
-      def chimp_campaign_soft_bounces(id, start=0, limit=100)
-        CHIMP_API.call("campaignSoftBounces", auth, id)    
+      def chimp_campaign_soft_bounces(campaign_id, start=0, limit=100)
+        CHIMP_API.call("campaignSoftBounces", auth, campaign_id)    
       end
       
-      def chimp_campaign_unsubscribed( id, start=0, limit=100)
-        CHIMP_API.call("campaignUnsubscribes", auth, id)    
+      def chimp_campaign_unsubscribed(campaign_id, start=0, limit=100)
+        CHIMP_API.call("campaignUnsubscribes", auth, campaign_id)    
       end
       
-       
+      def chimp_campaign_schedule(campaign_id, time, time_b)
+        CHIMP_API.call("campaignSchedule", auth, campaign_id, time, time_b)    
+      end
+         
     end 
   end 
 end 
