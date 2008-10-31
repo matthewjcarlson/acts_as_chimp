@@ -11,7 +11,7 @@ module MandarinSoda
       CHIMP_API = XMLRPC::Client.new2(CHIMP_URL)
       
       begin
-        @@chimp_config_path =  (RAILS_ROOT + '/config/mail_chimp.yml')
+        @@chimp_config_path = (RAILS_ROOT + '/config/mail_chimp.yml')
         @@chimp_config = YAML.load_file(@@chimp_config_path)[RAILS_ENV].symbolize_keys
         @@auth ||= CHIMP_API.call("login", @@chimp_config[:username], @@chimp_config[:password])                   
       end
@@ -60,7 +60,7 @@ module MandarinSoda
       
       private
       def chimp_campaign_abuse_reports(campaign_id, start=0, limit=100)
-          CHIMP_API.call("campaignAbuseReports", auth, self.campaign_id)        
+        CHIMP_API.call("campaignAbuseReports", auth, self.campaign_id)        
       end
       
       def chimp_campaign_stats(campaign_id)
@@ -157,7 +157,7 @@ module MandarinSoda
       end
       
       def chimp_campaign_content
-          CHIMP_API.call("campaignContent", auth, self.campaign_id)        
+        CHIMP_API.call("campaignContent", auth, self.campaign_id)        
       end
       
       
