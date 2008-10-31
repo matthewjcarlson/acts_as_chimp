@@ -62,36 +62,36 @@ module MandarinSoda
       
       end
       
-      def update_campaign(campaign_id, name, options)
+      def update_campaign(options)
     
       end  
       
-      def resume(campaign_id)
-        chimp_resume_campaign(campaign_id)
+      def resume
+        chimp_resume_campaign
       end
     
-      def pause(campaign_id)
-        chimp_pause_campaign(campaign_id)
+      def pause
+        chimp_pause_campaign
       end
       
       def unschedule
-        
+        chimp_campaign_unschedule
       end
       
-      def content(campaign_id)
-
+      def content
+        chimp_campaign_content
       end
       
-      def schedule(campaign_id, time, group_b_time)
-        chimp_campaign_schedule(campaign_id, time, group_b_time)
+      def schedule(time, group_b_time)
+        chimp_campaign_schedule(time, group_b_time)
       end
       
-      def send_now(campaign_id)
-        chimp_send_campaign(campaign_id)
+      def send_now
+        chimp_send_campaign
       end
       
-      def send_test(campaign_id)
-        chimp_send_campaign(campaign_id)
+      def send_test
+        chimp_send_campaign
       end
       
       private
@@ -105,24 +105,24 @@ module MandarinSoda
          CHIMP_API.call("listMemberInfo", auth, mailing_list_id)        
       end
       
-      def chimp_pause_campaign(campaign_id)
-        CHIMP_API.call("campaignPause", auth, campaign_id )        
+      def chimp_update_campaign(opts)
+        CHIMP_API.call("listMemberInfo", auth, self.campaign_id, self.name, opts)        
       end
       
-      def chimp_resume_campaign(campaign_id)
-        CHIMP_API.call("campaignResume", auth, campaign_id)        
+      def chimp_pause_campaign
+        CHIMP_API.call("campaignPause", auth, self.campaign_id )        
       end
       
-       def chimp_resume_campaign(campaign_id)
-          CHIMP_API.call("campaignResume", auth, campaign_id)        
-        end
-      
-      def chimp_send_campaign(campaign_id)
-        CHIMP_API.call("campaignSendNow", auth, campaign_id)        
+      def chimp_resume_campaign
+        CHIMP_API.call("campaignResume", auth, self.campaign_id)        
       end
       
-      def chimp_send_campaign_test(campaign_id)
-        CHIMP_API.call("campaignSendTest", auth, campaign_id)        
+      def chimp_send_campaign
+        CHIMP_API.call("campaignSendNow", auth, self.campaign_id)        
+      end
+      
+      def chimp_send_campaign_test
+        CHIMP_API.call("campaignSendTest", auth, self.campaign_id)        
       end
       
       def chimp_campaign_stats(campaign_id)
@@ -141,8 +141,16 @@ module MandarinSoda
         CHIMP_API.call("campaignUnsubscribes", auth, campaign_id)    
       end
       
-      def chimp_campaign_schedule(campaign_id, time, time_b)
-        CHIMP_API.call("campaignSchedule", auth, campaign_id, time, time_b)    
+      def chimp_campaign_schedule(time, time_b)
+        CHIMP_API.call("campaignSchedule", auth, self.campaign_id, time, time_b)    
+      end
+      
+      def chimp_campaign_unschedule
+        CHIMP_API.call("campaignUnschedule", auth, self.campaign_id)    
+      end
+      
+      def chimp_campaign_content
+          CHIMP_API.call("campaignContent", auth, self.campaign_id)        
       end
          
     end 
