@@ -10,7 +10,7 @@ module MandarinSoda
       begin
         @@chimp_config_path =  (RAILS_ROOT + '/config/mail_chimp.yml')
         @@chimp_config = YAML.load_file(@@chimp_config_path)[RAILS_ENV].symbolize_keys
-        @@auth ||= chimp_login(@@chimp_config[:username], @@chimp_config[:password])            
+        @@auth ||= XMLRPC::Client.new2("http://api.mailchimp.com/1.1/").call("login", @@chimp_config[:username], @@chimp_config[:password])                  
       end
     end 
     

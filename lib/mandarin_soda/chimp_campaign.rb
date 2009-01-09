@@ -7,13 +7,12 @@ module MandarinSoda
     def self.included(base) 
       base.extend ActMethods
       mattr_reader :chimp_config, :auth
-      CHIMP_URL = "http://api.mailchimp.com/1.1/"
-      CHIMP_API = XMLRPC::Client.new2(CHIMP_URL)
+      
       
       begin
         @@chimp_config_path = (RAILS_ROOT + '/config/mail_chimp.yml')
         @@chimp_config = YAML.load_file(@@chimp_config_path)[RAILS_ENV].symbolize_keys
-        @@auth ||= CHIMP_API.call("login", @@chimp_config[:username], @@chimp_config[:password])                   
+        @@auth ||= XMLRPC::Client.new2("http://api.mailchimp.com/1.1/").call("login", @@chimp_config[:username], @@chimp_config[:password])      
       end
     end 
     
@@ -59,6 +58,8 @@ module MandarinSoda
       end
       
       private
+      CHIMP_URL = "http://api.mailchimp.com/1.1/"
+      CHIMP_API = XMLRPC::Client.new2(CHIMP_URL)
       def chimp_campaign_abuse_reports(campaign_id, start=0, limit=100)
         CHIMP_API.call("campaignAbuseReports", auth, self.campaign_id)        
       end
@@ -159,7 +160,6 @@ module MandarinSoda
       def chimp_campaign_content
         CHIMP_API.call("campaignContent", auth, self.campaign_id)        
       end
-      
       
     end 
   end 
