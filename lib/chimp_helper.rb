@@ -4,7 +4,7 @@ require 'xmlrpc/client'
 class ChimpAuthorizationError < StandardError; end
 
 class ChimpHelper
-   CHIMP_URL = "http://api.mailchimp.com/1.0/" 
+   CHIMP_URL = "http://api.mailchimp.com/1.2/" 
   def login(user, password)
     raise ChimpAuthorizationError("Please provide a valid user and password") if (user.nil? || password.nil?) 
     chimp_api = XMLRPC::Client.new2(CHIMP_URL) 

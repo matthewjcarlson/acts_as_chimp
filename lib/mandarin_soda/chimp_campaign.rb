@@ -12,7 +12,7 @@ module MandarinSoda
       begin
         @@chimp_config_path = (RAILS_ROOT + '/config/mail_chimp.yml')
         @@chimp_config = YAML.load_file(@@chimp_config_path)[RAILS_ENV].symbolize_keys
-        @@auth ||= XMLRPC::Client.new2("http://api.mailchimp.com/1.1/").call("login", @@chimp_config[:username], @@chimp_config[:password])      
+        @@auth ||= XMLRPC::Client.new2("http://api.mailchimp.com/1.2/").call("login", @@chimp_config[:username], @@chimp_config[:password])      
       end
     end 
     
@@ -58,7 +58,7 @@ module MandarinSoda
       end
       
       private
-      CHIMP_URL = "http://api.mailchimp.com/1.1/"
+      CHIMP_URL = "http://api.mailchimp.com/1.2/"
       CHIMP_API = XMLRPC::Client.new2(CHIMP_URL)
       def chimp_campaign_abuse_reports(campaign_id, start=0, limit=100)
         CHIMP_API.call("campaignAbuseReports", auth, self.campaign_id)        
@@ -126,11 +126,11 @@ module MandarinSoda
       private
 
       def chimp_create_campaign(mailing_list_id, type, opts)
-         CHIMP_API.call("listMemberInfo", auth, mailing_list_id)        
+         CHIMP_API.call("campaignCreate", auth, mailing_list_id)        
       end
       
       def chimp_update_campaign(opts)
-        CHIMP_API.call("listMemberInfo", auth, self.campaign_id, self.name, opts)        
+        CHIMP_API.call("campaignUpdate", auth, self.campaign_id, self.name, opts)        
       end
       
       def chimp_pause_campaign
