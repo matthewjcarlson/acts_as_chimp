@@ -14,10 +14,10 @@ This plugin is fairly stripped down at the moment and is directed at a fairly sp
 We add user first name, last name and email address to our MailChimp mailing list, and we've likewise assumed you'll want to do the same.  As such, we've provided a script to create a migration to add user first and last names to your users table if they're not already there.  The sign-up forms are up to you and any additional fields are up to you.  
 
 
-After running the migrations, you can just add your credentials to the mail_chimp.yml file and then add the following to your user model:
+After running the migrations, you can just add your credentials to the mail_chimp.yml file and then add the following to your user model (NOTE: mail merge variables are dependent upon what you have setup in your MailChimp mailing list):
 
 acts_as_chimp :mailing_list_id => 'your_list_id', :mail_merge => {
-      "EMAIL" => :email, "FNAME" => :first_name, "LNAME" => :last_name }
+       "FNAME" => :first_name, "LNAME" => :last_name }
       
 
 You can get your list id by using the ChimpHelper class.  The mail merge arguments correspond to the arguments you setup when you created your MailChimp list.       

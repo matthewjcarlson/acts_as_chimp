@@ -27,7 +27,7 @@ module MandarinSoda
         end
         
          if options[:mail_merge].nil?
-            raise ChimpConfigError, 'Some mail merge arguments are required to subscribe a user.  See README.'
+            raise ChimpConfigError, 'Some mail merge arguments are required to subscribe a user.  See README and check your MailChimp config.'
         end
         
         self.options = options 
@@ -85,6 +85,7 @@ module MandarinSoda
            chimp_api ||= XMLRPC::Client.new2(CHIMP_URL)
            chimp_api.call("listSubscribe", auth, mailing_list_id, email, merge_vars, email_content_type, double_optin, update_existing,replace_interests)
          rescue XMLRPC::FaultException => e
+           puts 'FAULTTTT'
            puts e.faultCode
            puts e.faultString
          end    

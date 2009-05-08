@@ -2,14 +2,19 @@ require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
 
-desc 'Default: run unit tests.'
-task :default => :test
+# Run the unit tests
+namespace :test do
+  Rake::TestTask.new(:units) do |t|
+    t.pattern = 'test/unit/**/chimp_test.rb'
+    t.ruby_opts << '-rubygems'
+    t.verbose = true
+  end
 
-desc 'Test the acts_as_chimp plugin.'
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = true
+  Rake::TestTask.new(:remote) do |t|
+    t.pattern = 'test/remote/chimp_test.rb'
+    t.ruby_opts << '-rubygems'
+    t.verbose = true
+  end
 end
 
 desc 'Generate documentation for the acts_as_chimp plugin.'
