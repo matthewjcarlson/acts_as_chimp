@@ -85,7 +85,6 @@ module MandarinSoda
            chimp_api ||= XMLRPC::Client.new2(CHIMP_URL)
            chimp_api.call("listSubscribe", auth, mailing_list_id, email, merge_vars, email_content_type, double_optin, update_existing,replace_interests)
          rescue XMLRPC::FaultException => e
-           puts 'FAULTTTT'
            puts e.faultCode
            puts e.faultString
          end    
@@ -114,6 +113,7 @@ module MandarinSoda
               merge_args[key] = self.send(value) 
           end
         end
+        merge_args
       end
     end 
   end 

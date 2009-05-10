@@ -4,6 +4,7 @@ $:.unshift(File.dirname(__FILE__) + '/../lib')
 
 require 'test/unit'
 require File.dirname(__FILE__) + '/../lib/chimp_helper'
+require File.dirname(__FILE__) + '/../lib/mandarin_soda/chimp'
 require 'ruby-debug'
 require 'activesupport'
 

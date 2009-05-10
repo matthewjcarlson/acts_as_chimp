@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class ChimpTest < Test::Unit::TestCase
+class ChimpHelperTest < Test::Unit::TestCase
   
   
   def setup
